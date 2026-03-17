@@ -6,246 +6,190 @@ Instead of manually exporting data every day or week, this script does it for yo
 
 ---
 
-# 🧠 What This Project Does (Simple Explanation)
+# 🧠 What This Project Does
 
-Think of this as a **data pipeline**:
+This script automates a common workflow:
 
-```
-Metabase (API)
-      ↓
-Python Script (this project)
-      ↓
-Google Sheets (multiple tabs/files)
-      ↓
-Combined into 1 master sheet
+```id="flow2"
+Data Source API → Python Script → Google Sheets → Combined Report
 ```
 
-### In plain English:
+### In simple terms:
 
-* It **pulls data from Metabase dashboards**
-* It **writes the data into Google Sheets**
-* It **clears old data first (so no duplicates)**
-* It can **handle large datasets safely**
-* It **combines multiple sheets into one master sheet**
+* It retrieves data from one or more API endpoints
+* It writes each dataset into a Google Sheet
+* It clears old data before updating
+* It combines multiple datasets into a single “master” sheet
 
 ---
 
-# 🎯 Why This Exists
+# 🎯 Use Cases
 
-Google Apps Script has limits:
+You can use this project for:
 
-* ❌ Timeout (6 minutes)
-* ❌ Struggles with large datasets
-
-This Python version solves that:
-
-* ✅ No timeout (can run longer)
-* ✅ Handles big data (chunk writing)
-* ✅ Better error handling
-* ✅ More scalable (can run on server / scheduler)
+* 📈 Business reporting
+* 📊 Dashboard data pipelines
+* 🔄 Scheduled data sync (daily / weekly)
+* 🧾 Operational tracking in Google Sheets
 
 ---
 
-# 🚀 What Happens When You Run It
+# 🚀 How It Works
 
-When you run:
+When you run the script:
 
-```bash
+```bash id="run2"
 python src/main.py
 ```
 
-The script will:
+It performs the following steps:
 
-### 1. 🔐 Authenticate
+### 1. 🔐 Connect to Google Sheets
 
-* Connect to Google Sheets using a service account
-* Read your Metabase session token
-
----
-
-### 2. 📥 Fetch Data
-
-* Call Metabase API for each dataset:
-
-  * CD
-  * Transit
-  * Direct
-  * Milkrun
+Uses a service account to access your spreadsheets.
 
 ---
 
-### 3. 🧹 Clean Data
+### 2. 📥 Fetch Data from API
 
-* Format datetime fields
-* Prepare rows for Google Sheets
+Calls one or more API endpoints to retrieve data.
+
+Each dataset is defined as a “job” in the code.
 
 ---
 
-### 4. 📄 Update Google Sheets
+### 3. 🧹 Prepare Data
+
+* Cleans formatting (e.g. date/time fields)
+* Structures rows for Google Sheets
+
+---
+
+### 4. 📄 Update Sheets
 
 For each dataset:
 
-* Clear old data
-* Write new data (in chunks to avoid limits)
+* Clears existing content
+* Writes fresh data (in chunks to handle large volumes)
 
 ---
 
-### 5. 📊 Create a Master Sheet
+### 5. 📊 Create a Combined Sheet
 
-* Combine all sheets into one:
-  → **"Consolidated"**
-
----
-
-### 6. 🔔 (Optional) Notify
-
-* Send message to Google Chat
+All datasets are merged into one **consolidated sheet** for easier analysis.
 
 ---
 
-# 📁 Project Structure (Beginner Friendly)
+### 6. 🔔 Optional Notification
 
-```
+Can send a message (e.g. to Google Chat) after completion.
+
+---
+
+# 📁 Project Structure
+
+```id="structure2"
 src/
 │
-├── main.py        → Runs everything (start here)
-├── config.py      → Settings (IDs, URLs, credentials)
-├── sheets.py      → Talks to Google Sheets
-├── metabase.py    → Fetches data from API
-├── utils.py       → Small helpers (formatting, cleaning)
+├── main.py        → Main script (runs everything)
+├── config.py      → Configuration (IDs, settings)
+├── sheets.py      → Google Sheets integration
+├── metabase.py    → API data fetching
+├── utils.py       → Helper functions
 ```
 
 ---
 
-# ⚙️ Setup Guide
+# ⚙️ Setup
 
-## 1. Install Python packages
+## 1. Install dependencies
 
-```bash
+```bash id="install2"
 pip install -r requirements.txt
 ```
 
 ---
 
-## 2. Setup credentials
+## 2. Configure environment
 
-Copy the example file:
-
-```bash
+```bash id="env2"
 cp .env.example .env
 ```
 
-Fill in:
-
-* Google Service Account details
-* Metabase URL
-* Sheet IDs
+Fill in your credentials and configuration values.
 
 ---
 
 ## 3. Share your Google Sheets
 
-IMPORTANT ⚠️
-
-You must share each sheet with your service account email:
-
-```
-your-service-account@project.iam.gserviceaccount.com
-```
-
-Otherwise you’ll get:
-
-* ❌ 404 errors
-* ❌ Permission denied
+Make sure your target sheets are shared with your service account email.
 
 ---
 
 ## 4. Run the script
 
-```bash
+```bash id="run3"
 python src/main.py
 ```
 
 ---
 
-# 🧩 Key Concepts (Beginner Notes)
+# 🧩 Key Concepts
 
-### 🔹 What is Metabase API?
+### 🔹 API Data Source
 
-It lets you **programmatically download data** from dashboards.
-
----
-
-### 🔹 What is a Service Account?
-
-A special Google account used by code (not a human).
+The script pulls data from an external system via API (e.g. BI platform, database service, etc.).
 
 ---
 
-### 🔹 Why chunking?
+### 🔹 Google Service Account
 
-Google Sheets has limits.
-So we write data in small batches instead of all at once.
-
----
-
-### 🔹 Why clear sheet first?
-
-To avoid:
-
-* duplicate data
-* outdated rows
+A special Google account used by the script to access Sheets automatically.
 
 ---
 
-# ⚠️ Common Errors & Fixes
+### 🔹 Chunked Writing
 
-### ❌ 404 Not Found
-
-👉 Sheet ID wrong OR not shared
-✔ Fix: Share sheet with service account
+Large datasets are written in smaller batches to avoid Google Sheets limits.
 
 ---
 
-### ❌ Grid limit error
+### 🔹 Consolidation
 
-👉 Too much data for sheet
-✔ Fix: Increase sheet rows OR split data
-
----
-
-### ❌ No data returned
-
-👉 API issue or wrong parameters
-✔ Fix: Check Metabase query
+Multiple datasets are merged into one final sheet for easier reporting.
 
 ---
 
-# 📈 What You Can Use This For
+# ⚠️ Common Issues
 
-* Daily / weekly reporting
-* Operations dashboards
-* BI → Google Sheets sync
-* Lightweight ETL pipelines
+### Sheet not updating
+
+* Check permissions (share with service account)
+
+### No data returned
+
+* Verify API endpoint or parameters
+
+### Large dataset issues
+
+* Ensure your sheet has enough rows/columns
 
 ---
 
 # 🧠 Summary
 
-This project is:
+This project is a **lightweight data pipeline**:
 
-> A simple automation tool that moves data from Metabase into Google Sheets — safely and automatically.
+> It moves data from an API into Google Sheets automatically, safely handling large datasets and combining results into a single report.
 
 ---
 
-# 🚀 Future Improvements (Optional)
+# 🚀 Possible Improvements
 
-* Run automatically (cron / scheduler)
-* Deploy to cloud (Cloud Run)
+* Schedule execution (cron / scheduler)
+* Deploy to cloud (Cloud Run, VM)
 * Add data transformations (pandas)
-* Parallel jobs (faster)
+* Parallel processing for faster jobs
 
 ---
 
-If you're new to this:
-👉 Start with `main.py` and follow the flow step by step.
