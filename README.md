@@ -1,6 +1,6 @@
 # 📊 Google Sheets Metabase Sync (Python)
 
-This project helps you **automatically move data from Metabase (or any BI tool)** into **Google Sheets** using Python.
+This project helps you **automatically move data from multiple Metabase queries (or any BI tool)** into **Google Sheets** using Python.
 
 Instead of manually exporting data every day or week, this script does it for you — **fast, automatic, and reliable**.
 
